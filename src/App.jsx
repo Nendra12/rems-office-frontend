@@ -1,0 +1,40 @@
+import React, { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import './App.css'
+import Navbar from './components/Navbar'
+import SideBar from './components/SideBar'
+
+import SideBarMobile from './components/SideBarMobile';
+import Dashboard from './pages/Dashboard'
+import Karyawan from './pages/Karyawan'
+import Riwayat from './pages/Riwayat'
+import Absensi from './pages/Absensi'
+import Payroll from './pages/Payroll'
+import OrgStruktur from './pages/OrgStruktur'
+
+
+function App() {
+  const [sideBar, setSideBar] = useState(false)
+
+  return (
+    <div className='overflow-hidden h-screen'>
+      <SideBarMobile sideBar={sideBar} setSideBar={setSideBar} />
+      <Navbar setSideBar={setSideBar} />
+      <main className='flex mt-5 mx-5 gap-5 '>
+        <SideBar />
+        <section className='bg-white rounded-xl shadow-md w-full overflow-y-auto' style={{ height: 'calc(100vh - 100px)' }}>
+          <Routes>
+            <Route path='/' element={<Dashboard />}/>
+            <Route path='/karyawan' element={<Karyawan />}/>
+            <Route path='/riwayat' element={<Riwayat />}/>
+            <Route path='/org-struktur' element={<OrgStruktur />}/>
+            <Route path='/absensi' element={<Absensi />}/>
+            <Route path='/payroll' element={<Payroll />}/>
+          </Routes>
+        </section>
+      </main>
+    </div>
+  )
+}
+
+export default App
