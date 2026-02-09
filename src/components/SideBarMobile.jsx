@@ -34,10 +34,8 @@ function SideBarMobile({ sideBar, setSideBar, active }) {
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search.."
             />
-
           </div>
           <SideBarList active={active} />
-
         </div>
         <div className='flex items-center gap-3'>
           <button className='flex border justify-center border-red-600 hover:bg-red-700 bg-red-600 text-white gap-1.5 items-center px-2 py-1 rounded-xl cursor-pointer group w-full'>
