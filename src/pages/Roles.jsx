@@ -1,23 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Paper, Button, Table, TableBody, TableCell, 
-  TableContainer, TableHead, TableRow, IconButton, Dialog, 
-  DialogTitle, DialogContent, DialogActions, TextField, 
+  Box, Typography, Paper, Button, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, IconButton, Dialog,
+  DialogTitle, DialogContent, DialogActions, TextField,
   InputAdornment, Stack, Card, CardContent
 } from '@mui/material';
 import { Add, Edit, Delete, AdminPanelSettings, Payments } from '@mui/icons-material';
+import { AddRoles, GetDataRoles } from '../core/requestAPI';
 
 function Roles() {
   // Data Dummy Awal
-  const [roles, setRoles] = useState([
-    { id: 1, name: 'Supervisor', salary: 7000000 },
-    { id: 2, name: 'Kepala Toko', salary: 5500000 },
-    { id: 3, name: 'Helper', salary: 4200000 },
-  ]);
+  // const [roles, setRoles] = useState([
+  //   { id: 1, name: 'Supervisor', salary: 7000000 },
+  //   { id: 2, name: 'Kepala Toko', salary: 5500000 },
+  //   { id: 3, name: 'Helper', salary: 4200000 },
+  // ]);
 
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [formData, setFormData] = useState({ name: '', salary: '' });
+  const [formData, setFormData] = useState({ role_name: '', base_salary: '' });
+  // 1. Inisialisasi dengan array kosong jika data yang diharapkan adalah list
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const temp = await GetDataRoles();
+      setRoles(temp);
+    };
+    fetchRoles();
+  }, []);
 
   // Format Rupiah
   const formatIDR = (price) => {
@@ -34,22 +45,18 @@ function Roles() {
       setFormData({ name: role.name, salary: role.salary });
     } else {
       setEditId(null);
-      setFormData({ name: '', salary: '' });
+      setFormData({ role_name: '', base_salary: '' });
     }
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setFormData({ name: '', salary: '' });
+    setFormData({ role_name: '', base_salary: '' });
   };
 
-  const handleSubmit = () => {
-    if (editId) {
-      setRoles(roles.map(r => r.id === editId ? { ...r, ...formData } : r));
-    } else {
-      setRoles([...roles, { id: Date.now(), ...formData }]);
-    }
+  const handleSubmit = async () => {
+    await AddRoles(formData)
     handleClose();
   };
 
@@ -61,15 +68,15 @@ function Roles() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8f9fa', minHeight: '100vh' }}>
-      
+
       {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
         <Box>
           <Typography variant="h5" fontWeight="bold">Role & Salary Management</Typography>
         </Box>
-        <Button 
-          variant="contained" 
-          startIcon={<Add />} 
+        <Button
+          variant="contained"
+          startIcon={<Add />}
           onClick={() => handleOpen()}
           sx={{ borderRadius: 2, textTransform: 'none' }}
         >
@@ -77,7 +84,6 @@ function Roles() {
         </Button>
       </Stack>
 
-      {/* Stats Card */}
       <Card sx={{ mb: 4, borderRadius: 3, maxWidth: 300 }}>
         <CardContent>
           <Stack direction="row" spacing={2} alignItems="center">
@@ -104,9 +110,9 @@ function Roles() {
             {roles.map((role) => (
               <TableRow key={role.id} hover>
                 <TableCell>
-                  <Typography variant="body2" fontWeight="medium">{role.name}</Typography>
+                  <Typography variant="body2" fontWeight="medium">{role.role_name}</Typography>
                 </TableCell>
-                <TableCell>{formatIDR(role.salary)}</TableCell>
+                <TableCell>{formatIDR(role.base_salary)}</TableCell>
                 <TableCell align="right">
                   <IconButton size="small" color="primary" onClick={() => handleOpen(role)}>
                     <Edit fontSize="small" />
@@ -132,8 +138,8 @@ function Roles() {
               label="Nama Role"
               fullWidth
               placeholder="Contoh: Senior Helper"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.role_name}
+              onChange={(e) => setFormData({ ...formData, role_name: e.target.value })}
             />
             <TextField
               label="Jumlah Gaji"
@@ -142,17 +148,17 @@ function Roles() {
               InputProps={{
                 startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
               }}
-              value={formData.salary}
-              onChange={(e) => setFormData({ ...formData, salary: parseInt(e.target.value) || 0 })}
+              value={formData.base_salary}
+              onChange={(e) => setFormData({ ...formData, base_salary: parseInt(e.target.value) || 0 })}
             />
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
           <Button onClick={handleClose} color="inherit">Batal</Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={handleSubmit}
-            disabled={!formData.name || !formData.salary}
+            disabled={!formData.role_name || !formData.base_salary}
           >
             Simpan Role
           </Button>
