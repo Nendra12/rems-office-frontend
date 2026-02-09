@@ -8,7 +8,6 @@ import {
   Storefront, Engineering, Person, Search
 } from '@mui/icons-material';
 
-// 1. Data Dummy dengan Hierarki Baru
 const initialOrg = [
   {
     id: 'sup-1',
@@ -100,8 +99,6 @@ const OrgItem = ({ node, depth = 0 }) => {
 
 function OrgStruktur() {
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Filter data berdasarkan search
   const filterNode = (node, query) => {
     if (!query) return node;
 

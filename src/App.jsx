@@ -7,10 +7,10 @@ import SideBar from './components/SideBar'
 import SideBarMobile from './components/SideBarMobile';
 import Dashboard from './pages/Dashboard'
 import Karyawan from './pages/Karyawan'
-import Riwayat from './pages/Riwayat'
 import Absensi from './pages/Absensi'
 import Payroll from './pages/Payroll'
 import OrgStruktur from './pages/OrgStruktur'
+import Roles from './pages/Roles'
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Dashboard />} />
             <Route path='/karyawan' element={<Karyawan />} />
-            <Route path='/riwayat' element={<Riwayat />} />
+            <Route path='/roles' element={<Roles />} />
             <Route path='/org-struktur' element={<OrgStruktur />} />
             <Route path='/absensi' element={<Absensi />} />
             <Route path='/payroll' element={<Payroll />} />

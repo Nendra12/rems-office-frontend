@@ -9,8 +9,8 @@ import FormTambahKaryawan from '../components/FormTambahKaryawan';
 
 // Data Dummy Awal
 const initialData = [
-  { id: 1, name: 'Budi Santoso', email: 'budi@email.com', store: 'Toko Jakarta', salary: 'Rp 5.000.000', status: 'Aktif', approvalStatus: 'Approved', nik: '12345678', address: 'Jl. Melati No. 1', phone: '0812345', hireDate: '2023-01-10', contractEnd: '2026-01-10', role: 'Karyawan' },
-  { id: 2, name: 'Siti Aminah', email: 'siti@email.com', store: 'Toko Bandung', salary: 'Rp 4.500.000', status: 'Aktif', approvalStatus: 'Pending', nik: '87654321', address: 'Jl. Mawar No. 5', phone: '0856789', hireDate: '2023-05-15', contractEnd: '2026-05-15', role: 'Karyawan' },
+  { id: 1, name: 'Budi Santoso', email: 'budi@email.com', store: 'Toko Jakarta', salary: 'Rp 5.000.000', status: 'Aktif', nik: '12345678', address: 'Jl. Melati No. 1', phone: '0812345', hireDate: '2023-01-10', contractEnd: '2026-01-10', role: 'Helper' },
+  { id: 2, name: 'Siti Aminah', email: 'siti@email.com', store: 'Toko Bandung', salary: 'Rp 4.500.000', status: 'Aktif', nik: '87654321', address: 'Jl. Mawar No. 5', phone: '0856789', hireDate: '2023-05-15', contractEnd: '2026-05-15', role: 'Kepala Toko' },
 ];
 
 function Karyawan() {
@@ -20,7 +20,19 @@ function Karyawan() {
 
   // Daftar toko yang tersedia
   const availableStores = ['Toko Jakarta', 'Toko Bandung', 'Toko Surabaya', 'Toko Medan', 'Toko Semarang'];
-  const availableRoles = ['Admin', 'Manager', 'Kasir', 'Staff'];
+  const availableRoles = [
+    'Helper',
+    'Kepala Toko',
+    'Supervisor',
+    'Helper Gudang',
+    'Kepala Gudang',
+    'Admin Gudang',
+    'Admin Kantor',
+    'HRD',
+    'IT',
+    'Manager',
+  ];
+
 
   // State untuk Dialog Detail & Tambah
   const [openDetail, setOpenDetail] = useState(false);
@@ -71,7 +83,6 @@ function Karyawan() {
       store: formData.store,
       salary: formData.salary,
       status: 'Aktif',
-      approvalStatus: 'Pending',
       nik: formData.nik,
       address: formData.address,
       phone: formData.phone,
@@ -114,7 +125,7 @@ function Karyawan() {
               <TableCell>Penempatan Toko</TableCell>
               <TableCell>Gaji (View Only)</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Status Approval</TableCell>
+              <TableCell>Role</TableCell>
               <TableCell>Sisa Kontrak</TableCell>
               <TableCell align="center">Aksi</TableCell>
             </TableRow>
@@ -149,16 +160,7 @@ function Karyawan() {
                     size="small"
                   />
                 </TableCell>
-                <TableCell>
-                  <Chip
-                    label={row.approvalStatus}
-                    color={
-                      row.approvalStatus === 'Approved' ? 'success' :
-                        row.approvalStatus === 'Pending' ? 'warning' : 'error'
-                    }
-                    size="small"
-                  />
-                </TableCell>
+                <TableCell>{row.role}</TableCell>
                 <TableCell>{calculateRemainingDays(row.contractEnd)}</TableCell>
                 <TableCell align="center">
                   <IconButton onClick={(e) => handleMenuOpen(e, row)}>
@@ -200,17 +202,6 @@ function Karyawan() {
               <Typography variant="body2">{selectedEmp.hireDate}</Typography>
               <Typography variant="caption">Kontrak Berakhir</Typography>
               <Typography variant="body2">{selectedEmp.contractEnd || '-'}</Typography>
-              <Typography variant="caption">Status Approval</Typography>
-              <Typography variant="body2">
-                <Chip
-                  label={selectedEmp.approvalStatus}
-                  color={
-                    selectedEmp.approvalStatus === 'Approved' ? 'success' :
-                      selectedEmp.approvalStatus === 'Pending' ? 'warning' : 'error'
-                  }
-                  size="small"
-                />
-              </Typography>
               <Typography variant="caption">Posisi/Role</Typography>
               <Typography variant="body2">{selectedEmp.role}</Typography>
             </Box>

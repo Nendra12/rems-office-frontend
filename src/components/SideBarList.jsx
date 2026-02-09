@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import GroupOffIcon from '@mui/icons-material/GroupOff';
+import BadgeIcon from '@mui/icons-material/Badge';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PaymentsIcon from '@mui/icons-material/Payments';
@@ -29,9 +29,9 @@ function SideBarList({ active }) {
             </ul>
 
             <ul >
-                <Link to={"/riwayat"} className={`flex items-center ${currentPath === '/riwayat' ? 'text-blue-700' : 'text-black'} gap-2 py-2`}>
-                    <GroupOffIcon sx={{ fontSize: 18 }} />
-                    <p className={`${active ? 'max-w-0 opacity-0 -translate-x-2' : 'max-w-50 opacity-100 translate-x-0'} text-[13px] transition-all duration-200 ease-in-out overflow-hidden whitespace-nowrap`}>Riwayat Karyawan</p>
+                <Link to={"/roles"} className={`flex items-center ${currentPath === '/roles' ? 'text-blue-700' : 'text-black'} gap-2 py-2`}>
+                    <BadgeIcon sx={{ fontSize: 18 }} />
+                    <p className={`${active ? 'max-w-0 opacity-0 -translate-x-2' : 'max-w-50 opacity-100 translate-x-0'} text-[13px] transition-all duration-200 ease-in-out overflow-hidden whitespace-nowrap`}>Role Karyawan</p>
 
                 </Link>
             </ul>
@@ -52,13 +52,13 @@ function SideBarList({ active }) {
                 </Link>
             </ul>
 
-            <ul >
+            {/* <ul >
                 <Link to={"/payroll"} className={`flex items-center ${currentPath === '/payroll' ? 'text-blue-700' : 'text-black'} gap-2 py-2`}>
                     <PaymentsIcon sx={{ fontSize: 18 }} />
                     <p className={`${active ? 'max-w-0 opacity-0 -translate-x-2' : 'max-w-50 opacity-100 translate-x-0'} text-[13px] transition-all duration-200 ease-in-out overflow-hidden whitespace-nowrap`}>Payroll</p>
 
                 </Link>
-            </ul>
+            </ul> */}
         </li>
     )
 }

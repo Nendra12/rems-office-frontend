@@ -7,16 +7,13 @@ import {
 
 function FormTambahKaryawan({ open, onClose, onSave, availableStores, availableRoles }) {
     const [formData, setFormData] = useState({
-        nik: '',
         name: '',
         email: '',
         address: '',
         phone: '',
         contractStart: '',
-        contractEnd: '',
-        salary: '',
         store: '',
-        role: ''
+        role: 'Helper'
     });
 
     const handleChange = (field, value) => {
@@ -25,16 +22,12 @@ function FormTambahKaryawan({ open, onClose, onSave, availableStores, availableR
 
     const handleSubmit = () => {
         onSave(formData);
-        // Reset form
         setFormData({
-            nik: '',
             name: '',
             email: '',
             address: '',
             phone: '',
             contractStart: '',
-            contractEnd: '',
-            salary: '',
             store: '',
             role: ''
         });
@@ -48,15 +41,6 @@ function FormTambahKaryawan({ open, onClose, onSave, availableStores, availableR
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
             <DialogTitle>Tambah Karyawan Baru</DialogTitle>
             <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-                <TextField
-                    label="NIK"
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    value={formData.nik}
-                    onChange={(e) => handleChange('nik', e.target.value)}
-                    sx={{ marginTop: 2 }}
-                />
                 <TextField
                     label="Nama Lengkap"
                     fullWidth
@@ -104,26 +88,7 @@ function FormTambahKaryawan({ open, onClose, onSave, availableStores, availableR
                         value={formData.contractStart}
                         onChange={(e) => handleChange('contractStart', e.target.value)}
                     />
-                    <TextField
-                        label="Kontrak Berakhir"
-                        type="date"
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        InputLabelProps={{ shrink: true }}
-                        value={formData.contractEnd}
-                        onChange={(e) => handleChange('contractEnd', e.target.value)}
-                    />
                 </Box>
-                <TextField
-                    label="Gaji"
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    placeholder="Contoh: Rp 5.000.000"
-                    value={formData.salary}
-                    onChange={(e) => handleChange('salary', e.target.value)}
-                />
                 <FormControl fullWidth size="small">
                     <InputLabel>Penempatan Toko</InputLabel>
                     <Select
@@ -137,14 +102,17 @@ function FormTambahKaryawan({ open, onClose, onSave, availableStores, availableR
                     </Select>
                 </FormControl>
                 <FormControl fullWidth size="small">
-                    <InputLabel>Role</InputLabel>
+                    <InputLabel id="role-select-label">Role</InputLabel>
                     <Select
-                        value={formData.role}
+                        labelId="role-select-label"
+                        value={formData.role} 
                         label="Role"
                         onChange={(e) => handleChange('role', e.target.value)}
                     >
                         {availableRoles.map((role) => (
-                            <MenuItem key={role} value={role}>{role}</MenuItem>
+                            <MenuItem key={role} value={role}>
+                                {role}
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
