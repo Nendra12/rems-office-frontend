@@ -15,21 +15,22 @@ import OrgStruktur from './pages/OrgStruktur'
 
 function App() {
   const [sideBar, setSideBar] = useState(false)
+  const [menu, setMenu] = useState(false)
 
   return (
     <div className='overflow-hidden h-screen'>
-      <SideBarMobile sideBar={sideBar} setSideBar={setSideBar} />
+      <SideBarMobile sideBar={sideBar} setSideBar={setSideBar} active={menu} />
       <Navbar setSideBar={setSideBar} />
       <main className='flex mt-5 mx-5 gap-5 '>
-        <SideBar />
+        <SideBar menu={menu} setMenu={setMenu} />
         <section className='bg-white rounded-xl shadow-md w-full overflow-y-auto' style={{ height: 'calc(100vh - 100px)' }}>
           <Routes>
-            <Route path='/' element={<Dashboard />}/>
-            <Route path='/karyawan' element={<Karyawan />}/>
-            <Route path='/riwayat' element={<Riwayat />}/>
-            <Route path='/org-struktur' element={<OrgStruktur />}/>
-            <Route path='/absensi' element={<Absensi />}/>
-            <Route path='/payroll' element={<Payroll />}/>
+            <Route path='/' element={<Dashboard />} />
+            <Route path='/karyawan' element={<Karyawan />} />
+            <Route path='/riwayat' element={<Riwayat />} />
+            <Route path='/org-struktur' element={<OrgStruktur />} />
+            <Route path='/absensi' element={<Absensi />} />
+            <Route path='/payroll' element={<Payroll />} />
           </Routes>
         </section>
       </main>

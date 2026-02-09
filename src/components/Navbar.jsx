@@ -2,9 +2,10 @@ import React from 'react'
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import SettingsIcon from '@mui/icons-material/Settings';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
+import DateButton from './DateButton';
 
 function Navbar({ setSideBar }) {
     return (
@@ -20,24 +21,39 @@ function Navbar({ setSideBar }) {
                 </button>
 
                 <div className='flex items-center gap-3'>
-                    <div className='flex items-center border px-2 rounded-xl'>
-                        <button className='cursor-pointer'>
-                            <SearchIcon />
-                        </button>
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search.."
-                        />
+                    <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-gray-300 rounded-xl bg-white 
+                        hover:border-gray-400 focus-within:border-blue-500 
+                        focus-within:ring-2 focus-within:ring-blue-100 transition">
 
+                        <SearchIcon className="text-gray-500 text-xl" />
+
+                        <InputBase
+                            sx={{ flex: 1 }}
+                            placeholder="Search.."
+                            className="text-sm"
+                        />
                     </div>
-                    <button className='hidden lg:flex border gap-2 items-center rounded-xl py-1 px-2 cursor-pointer'>
-                        <CalendarTodayIcon />
-                        <p className='text-sm'>Feb 08, 2026</p>
+                    <DateButton />
+                    <button
+                        className="hidden md:flex items-center justify-center
+                                    w-9 h-9 border border-gray-300 rounded-xl
+                                    text-gray-600 hover:text-gray-900
+                                    hover:bg-gray-100 hover:border-gray-400
+                                    transition-all cursor-pointer"
+                    >
+                        <SettingsIcon fontSize="small" />
                     </button>
-                    <button className='border border-red-600 hover:bg-red-700 bg-red-600 text-white flex gap-1.5 items-center px-2 py-1 rounded-xl cursor-pointer group'>
+                    <button className='hidden md:flex border border-red-600 hover:bg-red-700 bg-red-600 text-white gap-1.5 items-center px-2 py-1 rounded-xl cursor-pointer group'>
                         <LogoutIcon />
                         <span className='text-sm'>Logout</span>
                     </button>
+                    <div className='flex md:hidden items-center gap-3'>
+                        <span className={`max-w-50 opacity-100 translate-x-0 text-[13px] transition-all duration-500 ease-in-out overflow-hidden whitespace-nowrap`}>
+                            <h1 className='text-sm font-bold'>Ahmad Hadi Nuryani</h1>
+                            <p className='text-[10px] justify-end flex'>HRD</p>
+                        </span>
+                        <img src="https://i.pinimg.com/736x/e7/88/8a/e7888a709184ccfe12cebf4803f591ef.jpg" alt="" className={`w-8 rounded-full transition-all ease-in-out duration-300`} />
+                    </div>
                 </div>
             </div>
         </nav>

@@ -1,129 +1,168 @@
 import React, { useState } from 'react';
 import {
-  Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Button, Avatar, Chip, IconButton, Typography, Dialog,
-  DialogTitle, DialogContent, DialogActions, TextField, MenuItem,
-  Select, FormControl, Snackbar, Alert, Divider, Grid
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
+  Button, IconButton, Typography, Box, Chip, Menu, MenuItem, Dialog,
+  DialogTitle, DialogContent, DialogActions, Avatar, Select, FormControl
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Visibility as ViewIcon,
-  Block as BlockIcon,
-  CheckCircle as ActiveIcon,
-  Store as StoreIcon,
-  Phone as PhoneIcon,
-  Badge as BadgeIcon
-} from '@mui/icons-material';
+import { MoreVert, Add, Visibility, Block } from '@mui/icons-material';
+import FormTambahKaryawan from '../components/FormTambahKaryawan';
 
-const Karyawan = () => {
-  // 1. DATA STATE
-  const [dataKaryawan, setDataKaryawan] = useState([
-    { id: 1, nik: '3578010101990001', name: 'Budi Santoso', address: 'Surabaya', phone: '081234567', hire_date: '2023-01-10', store: 'Toko Pusat', salary: 5000000, active: true },
-    { id: 2, nik: '3578020205950002', name: 'Siti Aminah', address: 'Sidoarjo', phone: '085678901', hire_date: '2023-05-15', store: 'Cabang A', salary: 4500000, active: true },
-  ]);
+// Data Dummy Awal
+const initialData = [
+  { id: 1, name: 'Budi Santoso', email: 'budi@email.com', store: 'Toko Jakarta', salary: 'Rp 5.000.000', status: 'Aktif', approvalStatus: 'Approved', nik: '12345678', address: 'Jl. Melati No. 1', phone: '0812345', hireDate: '2023-01-10', contractEnd: '2026-01-10', role: 'Karyawan' },
+  { id: 2, name: 'Siti Aminah', email: 'siti@email.com', store: 'Toko Bandung', salary: 'Rp 4.500.000', status: 'Aktif', approvalStatus: 'Pending', nik: '87654321', address: 'Jl. Mawar No. 5', phone: '0856789', hireDate: '2023-05-15', contractEnd: '2026-05-15', role: 'Karyawan' },
+];
 
-  const listToko = ['Toko Pusat', 'Cabang A', 'Cabang B', 'Gudang Utama'];
+function Karyawan() {
+  const [employees, setEmployees] = useState(initialData);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedEmp, setSelectedEmp] = useState(null);
 
-  // 2. UI STATE
-  const [openTambah, setOpenTambah] = useState(false);
+  // Daftar toko yang tersedia
+  const availableStores = ['Toko Jakarta', 'Toko Bandung', 'Toko Surabaya', 'Toko Medan', 'Toko Semarang'];
+  const availableRoles = ['Admin', 'Manager', 'Kasir', 'Staff'];
+
+  // State untuk Dialog Detail & Tambah
   const [openDetail, setOpenDetail] = useState(false);
-  const [selectedKaryawan, setSelectedKaryawan] = useState(null);
-  const [toast, setToast] = useState({ open: false, message: '', severity: 'success' });
-  const [formTambah, setFormTambah] = useState({
-    nik: '', name: '', address: '', phone: '', hire_date: '', store: 'Toko Pusat', salary: ''
-  });
+  const [openAdd, setOpenAdd] = useState(false);
 
-  // 3. LOGIC HANDLERS
-  const handleToggleStatus = (id) => {
-    setDataKaryawan(prev => prev.map(k => k.id === id ? { ...k, active: !k.active } : k));
-    showToast("Status karyawan berhasil diubah", "info");
+  // Fungsi Menu Aksi
+  const handleMenuOpen = (event, emp) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedEmp(emp);
   };
 
-  const handleMoveStore = (id, newStore) => {
-    setDataKaryawan(prev => prev.map(k => k.id === id ? { ...k, store: newStore } : k));
-    showToast(`Penempatan berhasil dipindah ke ${newStore}`, "success");
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
-  const handleSaveKaryawan = () => {
-    const newEntry = { ...formTambah, id: Date.now(), active: true, salary: parseInt(formTambah.salary) };
-    setDataKaryawan([...dataKaryawan, newEntry]);
-    setOpenTambah(false);
-    showToast("Karyawan baru berhasil ditambahkan", "success");
-    setFormTambah({ nik: '', name: '', address: '', phone: '', hire_date: '', store: 'Toko Pusat', salary: '' });
+  const toggleStatus = () => {
+    setEmployees(employees.map(e =>
+      e.id === selectedEmp.id ? { ...e, status: e.status === 'Aktif' ? 'Non-Aktif' : 'Aktif' } : e
+    ));
+    handleMenuClose();
   };
 
-  const showToast = (message, severity) => {
-    setToast({ open: true, message, severity });
+  const handleStoreChange = (empId, newStore) => {
+    setEmployees(employees.map(e =>
+      e.id === empId ? { ...e, store: newStore } : e
+    ));
+  };
+
+  // Fungsi untuk menghitung sisa kontrak
+  const calculateRemainingDays = (contractEnd) => {
+    if (!contractEnd) return '-';
+    const today = new Date();
+    const endDate = new Date(contractEnd);
+    const diffTime = endDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'Habis';
+    if (diffDays === 0) return 'Hari ini';
+    if (diffDays === 1) return '1 hari';
+    return `${diffDays} hari`;
+  };
+
+  const handleSaveEmployee = (formData) => {
+    const newEmp = {
+      id: employees.length + 1,
+      name: formData.name,
+      email: formData.email,
+      store: formData.store,
+      salary: formData.salary,
+      status: 'Aktif',
+      approvalStatus: 'Pending',
+      nik: formData.nik,
+      address: formData.address,
+      phone: formData.phone,
+      role: formData.role,
+      hireDate: formData.contractStart,
+      contractEnd: formData.contractEnd
+    };
+    setEmployees([...employees, newEmp]);
+    setOpenAdd(false);
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8f9fa', minHeight: '100vh' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: '#1a237e' }}>Manajemen Karyawan</Typography>
-        </Box>
-        <Button 
-          variant="contained" 
-          startIcon={<AddIcon />} 
-          onClick={() => setOpenTambah(true)}
-          sx={{ borderRadius: 3, px: 3, py: 1, textTransform: 'none', fontWeight: 'bold', boxShadow: 3 }}
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+        <h5 className='text-md md:text-lg font-bold'>Daftar Karyawan</h5>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => setOpenAdd(true)}
+          sx={{
+            minWidth: { xs: '48px', sm: 'auto' },
+            px: { xs: 1, sm: 2 },
+            '& .MuiButton-startIcon': {
+              margin: { xs: 0, sm: '0 8px 0 -4px' } // Hilangkan margin ikon saat teks tidak ada
+            },
+            borderRadius: 3
+          }}
         >
-          Tambah Karyawan
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            Tambah Karyawan
+          </Box>
         </Button>
       </Box>
 
-      {/* TABLE SECTION */}
-      <TableContainer component={Paper} sx={{ borderRadius: 4, overflow: 'hidden', border: '1px solid #e0e0e0', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
-        <Table>
-          <TableHead sx={{ bgcolor: '#ffffff' }}>
+      <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+        <Table sx={{ minWidth: 650 }}>
+          <TableHead sx={{ bgcolor: '#f5f5f5' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', color: '#666' }}>PROFIL KARYAWAN</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#666' }}>PENEMPATAN</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#666' }}>STATUS</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#666' }} align="right">AKSI</TableCell>
+              <TableCell>Profil Nama</TableCell>
+              <TableCell>Penempatan Toko</TableCell>
+              <TableCell>Gaji (View Only)</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Status Approval</TableCell>
+              <TableCell>Sisa Kontrak</TableCell>
+              <TableCell align="center">Aksi</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {dataKaryawan.map((row) => (
-              <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            {employees.map((row) => (
+              <TableRow key={row.id} hover>
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Avatar sx={{ bgcolor: row.active ? '#3f51b5' : '#e0e0e0', fontWeight: 'bold' }}>
-                      {row.name.charAt(0)}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{row.name}</Typography>
-                      <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
-                        <BadgeIcon sx={{ fontSize: 12 }} /> {row.nik}
-                      </Typography>
-                    </Box>
+                    <Avatar sx={{ width: 32, height: 32 }}>{row.name.charAt(0)}</Avatar>
+                    {row.name}
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Select
-                    variant="standard"
-                    value={row.store}
-                    onChange={(e) => handleMoveStore(row.id, e.target.value)}
-                    disableUnderline
-                    sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#3f51b5', bgcolor: '#f0f2ff', px: 1.5, py: 0.5, borderRadius: 2 }}
-                  >
-                    {listToko.map(toko => <MenuItem key={toko} value={toko}>{toko}</MenuItem>)}
-                  </Select>
+                  <FormControl size="small" fullWidth>
+                    <Select
+                      value={row.store}
+                      onChange={(e) => handleStoreChange(row.id, e.target.value)}
+                      sx={{ minWidth: 150 }}
+                    >
+                      {availableStores.map((store) => (
+                        <MenuItem key={store} value={store}>{store}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </TableCell>
+                <TableCell>{row.salary}</TableCell>
                 <TableCell>
-                  <Chip 
-                    label={row.active ? "Aktif" : "Nonaktif"} 
-                    color={row.active ? "success" : "default"} 
-                    size="small" 
-                    sx={{ fontWeight: 'bold', borderRadius: 1.5 }}
+                  <Chip
+                    label={row.status}
+                    color={row.status === 'Aktif' ? 'success' : 'error'}
+                    size="small"
                   />
                 </TableCell>
-                <TableCell align="right">
-                  <IconButton color="primary" onClick={() => { setSelectedKaryawan(row); setOpenDetail(true); }}>
-                    <ViewIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton color={row.active ? "error" : "success"} onClick={() => handleToggleStatus(row.id)}>
-                    {row.active ? <BlockIcon fontSize="small" /> : <ActiveIcon fontSize="small" />}
+                <TableCell>
+                  <Chip
+                    label={row.approvalStatus}
+                    color={
+                      row.approvalStatus === 'Approved' ? 'success' :
+                        row.approvalStatus === 'Pending' ? 'warning' : 'error'
+                    }
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>{calculateRemainingDays(row.contractEnd)}</TableCell>
+                <TableCell align="center">
+                  <IconButton onClick={(e) => handleMenuOpen(e, row)}>
+                    <MoreVert />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -132,79 +171,67 @@ const Karyawan = () => {
         </Table>
       </TableContainer>
 
-      {/* MODAL TAMBAH */}
-      <Dialog open={openTambah} onClose={() => setOpenTambah(false)} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 4 } }}>
-        <DialogTitle sx={{ fontWeight: 'bold', pt: 3 }}>Tambah Karyawan Baru</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 0.5 }}>
-            <Grid item xs={12} md={6}>
-              <TextField label="Nama Lengkap" fullWidth variant="outlined" value={formTambah.name} onChange={e => setFormTambah({...formTambah, name: e.target.value})} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField label="NIK" fullWidth variant="outlined" value={formTambah.nik} onChange={e => setFormTambah({...formTambah, nik: e.target.value})} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField label="Telepon" fullWidth variant="outlined" value={formTambah.phone} onChange={e => setFormTambah({...formTambah, phone: e.target.value})} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField label="Gaji (Rp)" type="number" fullWidth variant="outlined" value={formTambah.salary} onChange={e => setFormTambah({...formTambah, salary: e.target.value})} />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField label="Alamat" fullWidth multiline rows={2} variant="outlined" value={formTambah.address} onChange={e => setFormTambah({...formTambah, address: e.target.value})} />
-            </Grid>
-          </Grid>
+      {/* Menu Dropdown Aksi */}
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        <MenuItem onClick={() => setOpenDetail(true)}><Visibility sx={{ mr: 1 }} fontSize="small" /> Detail Karyawan</MenuItem>
+        <MenuItem onClick={toggleStatus}>
+          <Block sx={{ mr: 1 }} fontSize="small" color="error" />
+          {selectedEmp?.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}
+        </MenuItem>
+      </Menu>
+
+      {/* Dialog Detail (Read Only) */}
+      <Dialog open={openDetail} onClose={() => setOpenDetail(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Detail Karyawan</DialogTitle>
+        <DialogContent dividers>
+          {selectedEmp && (
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+              <Typography variant="caption">NIK</Typography>
+              <Typography variant="body2">{selectedEmp.nik}</Typography>
+              <Typography variant="caption">Nama Lengkap</Typography>
+              <Typography variant="body2">{selectedEmp.name}</Typography>
+              <Typography variant="caption">Email</Typography>
+              <Typography variant="body2">{selectedEmp.email || '-'}</Typography>
+              <Typography variant="caption">Alamat</Typography>
+              <Typography variant="body2">{selectedEmp.address}</Typography>
+              <Typography variant="caption">No. Telepon</Typography>
+              <Typography variant="body2">{selectedEmp.phone}</Typography>
+              <Typography variant="caption">Tanggal Masuk</Typography>
+              <Typography variant="body2">{selectedEmp.hireDate}</Typography>
+              <Typography variant="caption">Kontrak Berakhir</Typography>
+              <Typography variant="body2">{selectedEmp.contractEnd || '-'}</Typography>
+              <Typography variant="caption">Status Approval</Typography>
+              <Typography variant="body2">
+                <Chip
+                  label={selectedEmp.approvalStatus}
+                  color={
+                    selectedEmp.approvalStatus === 'Approved' ? 'success' :
+                      selectedEmp.approvalStatus === 'Pending' ? 'warning' : 'error'
+                  }
+                  size="small"
+                />
+              </Typography>
+              <Typography variant="caption">Posisi/Role</Typography>
+              <Typography variant="body2">{selectedEmp.role}</Typography>
+            </Box>
+          )}
         </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setOpenTambah(false)} sx={{ color: 'text.secondary' }}>Batal</Button>
-          <Button variant="contained" onClick={handleSaveKaryawan} sx={{ borderRadius: 2, px: 4 }}>Simpan</Button>
+        <DialogActions>
+          <Button onClick={() => setOpenDetail(false)}>Tutup</Button>
         </DialogActions>
       </Dialog>
 
-      {/* MODAL DETAIL */}
-      <Dialog open={openDetail} onClose={() => setOpenDetail(false)} fullWidth maxWidth="xs" PaperProps={{ sx: { borderRadius: 5 } }}>
-        {selectedKaryawan && (
-          <Box sx={{ pb: 3 }}>
-            <Box sx={{ height: 100, bgcolor: '#1a237e', display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
-              <Avatar sx={{ width: 80, height: 80, mb: -4, border: '4px solid white', bgcolor: '#3f51b5', fontSize: 32 }}>
-                {selectedKaryawan.name.charAt(0)}
-              </Avatar>
-            </Box>
-            <DialogContent sx={{ mt: 4, textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{selectedKaryawan.name}</Typography>
-              <Typography variant="caption" color="text.secondary" gutterBottom>{selectedKaryawan.nik}</Typography>
-              
-              <Box sx={{ mt: 3, textAlign: 'left', bgcolor: '#f5f5f5', p: 2, borderRadius: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="caption" color="text.secondary">Gaji Pokok</Typography>
-                  <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 'bold' }}>Rp {selectedKaryawan.salary.toLocaleString('id-ID')}</Typography>
-                </Box>
-                <Divider sx={{ my: 1 }} />
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                  <StoreIcon sx={{ fontSize: 14 }} /> {selectedKaryawan.store}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                  <PhoneIcon sx={{ fontSize: 14 }} /> {selectedKaryawan.phone}
-                </Typography>
-              </Box>
-            </DialogContent>
-            <Box sx={{ px: 3 }}>
-              <Button fullWidth variant="contained" color="inherit" onClick={() => setOpenDetail(false)} sx={{ borderRadius: 3, bgcolor: '#000', color: '#fff', '&:hover': { bgcolor: '#333' } }}>
-                Tutup Profil
-              </Button>
-            </Box>
-          </Box>
-        )}
-      </Dialog>
-
-      {/* NOTIFIKASI */}
-      <Snackbar open={toast.open} autoHideDuration={3000} onClose={() => setToast({ ...toast, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity={toast.severity} sx={{ width: '100%', borderRadius: 3, boxShadow: 3 }}>
-          {toast.message}
-        </Alert>
-      </Snackbar>
+      {/* Form Tambah Karyawan */}
+      <FormTambahKaryawan
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onSave={handleSaveEmployee}
+        availableStores={availableStores}
+        availableRoles={availableRoles}
+      />
 
     </Box>
   );
-};
+}
 
 export default Karyawan;
