@@ -5,17 +5,17 @@ import {
   DialogTitle, DialogContent, DialogActions, TextField,
   InputAdornment, Stack, Card, CardContent
 } from '@mui/material';
-import Alert from '@mui/material/Alert';
 import { Add, Edit, Delete, AdminPanelSettings, Payments, Message } from '@mui/icons-material';
-import { AddRoles, GetDataRoles } from '../core/requestAPI';
+import { AddRoles, deleteRole, editRole, GetDataRoles } from '../core/requestAPI';
 
 function Roles() {
 
   const [open, setOpen] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState((null));
   const [formData, setFormData] = useState({ role_name: '', base_salary: '' });
   const [roles, setRoles] = useState([]);
-  const [addRole, setAddRole] = useState({status: "no", pesan: ''})
+  const [addRole, setAddRole] = useState({ status: "no", pesan: '' })
+  const [aksi, setAksi] = useState(false)
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -34,14 +34,17 @@ function Roles() {
     }).format(price);
   };
 
-  const handleOpen = (role = null) => {
+  const handleOpen = async (role = null) => {
     if (role) {
       setEditId(role.id);
-      setFormData({ name: role.name, salary: role.salary });
+      const nama_role = role.role_name
+      const gaji = role.base_salary
+      setFormData({ role_name: nama_role, base_salary: gaji });
     } else {
       setEditId(null);
       setFormData({ role_name: '', base_salary: '' });
     }
+
     setOpen(true);
   };
 
@@ -51,20 +54,40 @@ function Roles() {
   };
 
   const handleSubmit = async () => {
-    const addR = await AddRoles(formData)
-    setAddRole({status: 'ok', pesan: addR})
-    handleClose();
+    if (!editId) {
+      const addR = await AddRoles(formData)
+      setAddRole({ status: 'ok', pesan: addR })
+      setAksi(prev => !prev)
+      handleClose();
+    } else {
+      await editRole(formData, editId)
+      setAksi(prev => !prev)
+      handleClose();
+    }
   };
 
   const handleDelete = (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus role ini?')) {
-      setRoles(roles.filter(r => r.id !== id));
+      const delRole = async () => {
+        await deleteRole(id)
+        setAksi(prev => !prev)
+      }
+      delRole()
     }
   };
 
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const data = await GetDataRoles();
+      setRoles(data);
+    };
+
+    fetchRoles();
+  }, [aksi]);
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8f9fa', minHeight: '100vh' }}>
-      <Alert severity="success" className={`${addRole.status == 'ok' ? 'block' : 'hidden'}`}>{addRole.pesan}</Alert>
+      {/* <Alert severity="success" className={`${addRole.status == 'ok' ? 'block' : 'hidden'}`}>{addRole.pesan}</Alert> */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
         <Box>
           <Typography variant="h5" fontWeight="bold">Role & Salary Management</Typography>
@@ -144,7 +167,7 @@ function Roles() {
                 startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
               }}
               value={formData.base_salary}
-              onChange={(e) => setFormData({ ...formData, base_salary: parseInt(e.target.value) || 0 })}
+              onChange={(e) => setFormData({ ...formData, base_salary: parseInt(e.target.value)})}
             />
           </Stack>
         </DialogContent>
