@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
@@ -6,11 +6,12 @@ import SideBar from './components/SideBar'
 
 import SideBarMobile from './components/SideBarMobile';
 import Dashboard from './pages/Dashboard'
-import Karyawan from './pages/Karyawan'
-import Absensi from './pages/Absensi'
-import Payroll from './pages/Payroll'
-import OrgStruktur from './pages/OrgStruktur'
-import Roles from './pages/Roles'
+
+const Karyawan = lazy(() => import('./pages/Karyawan'))
+const Roles = lazy(() => import('./pages/Roles'))
+const OrgStruktur = lazy(() => import('./pages/OrgStruktur'))
+const Absensi = lazy(() => import('./pages/Absensi'))
+const Payroll = lazy(() => import('./pages/Payroll'))
 
 
 function App() {

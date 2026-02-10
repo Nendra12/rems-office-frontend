@@ -5,22 +5,17 @@ import {
   DialogTitle, DialogContent, DialogActions, TextField,
   InputAdornment, Stack, Card, CardContent
 } from '@mui/material';
-import { Add, Edit, Delete, AdminPanelSettings, Payments } from '@mui/icons-material';
+import Alert from '@mui/material/Alert';
+import { Add, Edit, Delete, AdminPanelSettings, Payments, Message } from '@mui/icons-material';
 import { AddRoles, GetDataRoles } from '../core/requestAPI';
 
 function Roles() {
-  // Data Dummy Awal
-  // const [roles, setRoles] = useState([
-  //   { id: 1, name: 'Supervisor', salary: 7000000 },
-  //   { id: 2, name: 'Kepala Toko', salary: 5500000 },
-  //   { id: 3, name: 'Helper', salary: 4200000 },
-  // ]);
 
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState(null);
   const [formData, setFormData] = useState({ role_name: '', base_salary: '' });
-  // 1. Inisialisasi dengan array kosong jika data yang diharapkan adalah list
   const [roles, setRoles] = useState([]);
+  const [addRole, setAddRole] = useState({status: "no", pesan: ''})
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -56,7 +51,8 @@ function Roles() {
   };
 
   const handleSubmit = async () => {
-    await AddRoles(formData)
+    const addR = await AddRoles(formData)
+    setAddRole({status: 'ok', pesan: addR})
     handleClose();
   };
 
@@ -68,8 +64,7 @@ function Roles() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8f9fa', minHeight: '100vh' }}>
-
-      {/* Header */}
+      <Alert severity="success" className={`${addRole.status == 'ok' ? 'block' : 'hidden'}`}>{addRole.pesan}</Alert>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
         <Box>
           <Typography variant="h5" fontWeight="bold">Role & Salary Management</Typography>

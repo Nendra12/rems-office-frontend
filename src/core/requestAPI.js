@@ -16,9 +16,9 @@ export const AddRoles = async (formData) => {
             throw new Error(result.message || "Gagal Menyimpan")
         }
 
-        alert(result.message)
+        return result.message
     } catch (error) {
-        alert(error)
+        return error
     }
 }
 
