@@ -6,7 +6,7 @@ import {
   InputAdornment, Stack, Card, CardContent
 } from '@mui/material';
 import { Add, Edit, Delete, AdminPanelSettings, Payments, Message, Warning } from '@mui/icons-material';
-import { AddRoles, deleteRole, editRole, GetDataRoles } from '../core/requestAPI';
+import { AddRoles, deleteRole, editRole, GetDataRoles } from '../services/requestRole';
 import Swal from 'sweetalert2';
 
 

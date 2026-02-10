@@ -1,8 +1,9 @@
 const apiURL = import.meta.env.VITE_API_BASE_URL
+const base_path = "api/hrd"
 
 export const AddRoles = async (formData) => {
     try {
-        const response = await fetch(`${apiURL}/api/hrd/roles`, {
+        const response = await fetch(`${apiURL}/${base_path}/roles`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -24,7 +25,7 @@ export const AddRoles = async (formData) => {
 
 export const GetDataRoles = async () => {
     try {
-        const response = await fetch(`${apiURL}/api/hrd/roles`, {
+        const response = await fetch(`${apiURL}/${base_path}/roles`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -51,7 +52,7 @@ export const GetDataRoles = async () => {
 
 export const editRole = async (formData, id) => {
     try {
-        const response = await fetch(`${apiURL}/api/hrd/roles/${id}`, {
+        const response = await fetch(`${apiURL}/${base_path}/roles/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -76,7 +77,7 @@ export const editRole = async (formData, id) => {
 
 export const deleteRole = async (id) => {
     try {
-        const response = await fetch(`${apiURL}/api/hrd/roles/${id}`, {
+        const response = await fetch(`${apiURL}/${base_path}/roles/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

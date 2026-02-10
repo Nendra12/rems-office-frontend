@@ -11,5 +11,10 @@ export default defineConfig({
       },
     }),
     tailwindcss(),
-  ],
+  ], 
+  server: {
+    allowedHosts: [
+      'laevo-frequently-pinkie.ngrok-free.dev'
+    ]
+  }
 })
