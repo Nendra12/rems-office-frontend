@@ -97,7 +97,7 @@ function Karyawan() {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
-        <h5 className='text-md md:text-lg font-bold'>Daftar Karyawan</h5>
+        <h5 className='text-md md:text-xl font-bold'>Daftar Karyawan</h5>
         <Button
           variant="contained"
           startIcon={<Add />}

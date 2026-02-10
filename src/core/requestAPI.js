@@ -16,9 +16,9 @@ export const AddRoles = async (formData) => {
             throw new Error(result.message || "Gagal Menyimpan")
         }
 
-        alert(result.message)
+        return result
     } catch (error) {
-        alert(error)
+        return error
     }
 }
 
@@ -66,10 +66,10 @@ export const editRole = async (formData, id) => {
             throw new Error(result.message || "Gagal Mengedit")
         }
 
-        alert(result.message)
+        return result
 
     } catch (error) {
-        alert(error)
+        return error
     }
 }
 
@@ -90,9 +90,9 @@ export const deleteRole = async (id) => {
             throw new Error(result.message || "Gagal Menghapus")
         }
 
-        alert(result.message)
+        return result
 
     } catch (error) {
-        alert(error)
+        return error
     }
 }

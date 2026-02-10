@@ -5,8 +5,10 @@ import {
   DialogTitle, DialogContent, DialogActions, TextField,
   InputAdornment, Stack, Card, CardContent
 } from '@mui/material';
-import { Add, Edit, Delete, AdminPanelSettings, Payments, Message } from '@mui/icons-material';
+import { Add, Edit, Delete, AdminPanelSettings, Payments, Message, Warning } from '@mui/icons-material';
 import { AddRoles, deleteRole, editRole, GetDataRoles } from '../core/requestAPI';
+import Swal from 'sweetalert2';
+
 
 function Roles() {
 
@@ -14,7 +16,6 @@ function Roles() {
   const [editId, setEditId] = useState((null));
   const [formData, setFormData] = useState({ role_name: '', base_salary: '' });
   const [roles, setRoles] = useState([]);
-  const [addRole, setAddRole] = useState({ status: "no", pesan: '' })
   const [aksi, setAksi] = useState(false)
 
   useEffect(() => {
@@ -55,24 +56,89 @@ function Roles() {
 
   const handleSubmit = async () => {
     if (!editId) {
-      const addR = await AddRoles(formData)
-      setAddRole({ status: 'ok', pesan: addR })
-      setAksi(prev => !prev)
-      handleClose();
+      try {
+        const result = await AddRoles(formData)
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: result.message,
+          timer: 2000,
+          showConfirmButton: true
+        })
+
+        setAksi(prev => !prev)
+        handleClose();
+
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          timer: 2000,
+          text: error.message,
+          showCloseButton: true
+        })
+      }
     } else {
-      await editRole(formData, editId)
-      setAksi(prev => !prev)
-      handleClose();
+      try {
+        const result = await editRole(formData, editId)
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: result.message,
+          timer: 2000,
+          showConfirmButton: true
+        })
+
+        setAksi(prev => !prev)
+        handleClose();
+
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Edit Data",
+          text: error.message
+        })
+      }
     }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus role ini?')) {
-      const delRole = async () => {
-        await deleteRole(id)
+  const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Apakah anda yakin ingin menghapus data role ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Hapus",
+      cancelButtonText: "Batal"
+    })
+
+
+    if (confirm.isConfirmed) {
+      try {
+        const result = await deleteRole(id)
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: result.message,
+          timer: 1000,
+          showConfirmButton: false,
+        })
+
         setAksi(prev => !prev)
+
+
+
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Menghapus",
+          text: error.message,
+        })
       }
-      delRole()
+    } else {
+      return
     }
   };
 
@@ -87,18 +153,26 @@ function Roles() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8f9fa', minHeight: '100vh' }}>
-      {/* <Alert severity="success" className={`${addRole.status == 'ok' ? 'block' : 'hidden'}`}>{addRole.pesan}</Alert> */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
         <Box>
-          <Typography variant="h5" fontWeight="bold">Role & Salary Management</Typography>
+          <h5 className='text-md md:text-xl font-bold'>Role & Salary Management</h5>
         </Box>
         <Button
           variant="contained"
           startIcon={<Add />}
           onClick={() => handleOpen()}
-          sx={{ borderRadius: 2, textTransform: 'none' }}
+          sx={{
+            minWidth: { xs: '48px', sm: 'auto' },
+            px: { xs: 1, sm: 2 },
+            '& .MuiButton-startIcon': {
+              margin: { xs: 0, sm: '0 8px 0 -4px' } // Hilangkan margin ikon saat teks tidak ada
+            },
+            borderRadius: 3
+          }}
         >
-          Role Baru
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            Role Baru
+          </Box>
         </Button>
       </Stack>
 
@@ -167,7 +241,7 @@ function Roles() {
                 startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
               }}
               value={formData.base_salary}
-              onChange={(e) => setFormData({ ...formData, base_salary: parseInt(e.target.value)})}
+              onChange={(e) => setFormData({ ...formData, base_salary: parseInt(e.target.value) })}
             />
           </Stack>
         </DialogContent>
