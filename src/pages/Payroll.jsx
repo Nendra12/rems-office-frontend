@@ -25,8 +25,6 @@ function Payroll() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8f9fa', minHeight: '100vh' }}>
-      
-      {/* Header Section */}
       <Stack 
         direction={{ xs: 'column', sm: 'row' }} 
         justifyContent="space-between" 
@@ -45,7 +43,6 @@ function Payroll() {
         </Stack>
       </Stack>
 
-      {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={4}>
           <Card sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
@@ -88,7 +85,6 @@ function Payroll() {
         </Grid>
       </Grid>
 
-      {/* Payroll Table */}
       <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflowX: 'auto' }}>
         <Table sx={{ minWidth: 800 }}>
           <TableHead sx={{ bgcolor: '#fdfdfd' }}>
